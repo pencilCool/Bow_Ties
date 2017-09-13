@@ -160,6 +160,7 @@
 				TargetAttributes = {
 					FEA624891D6A54FA0011CF8F = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 8Y89LE8P2N;
 						ProvisioningStyle = Automatic;
 					};
 					FEA624A01D6A54FA0011CF8F = {
@@ -359,9 +360,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8Y89LE8P2N;
 				INFOPLIST_FILE = "Bow Ties/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.razeware.Bow-Ties";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pencilCool.Bow-Ties";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -371,9 +373,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8Y89LE8P2N;
 				INFOPLIST_FILE = "Bow Ties/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.razeware.Bow-Ties";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pencilCool.Bow-Ties";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
