@@ -39,8 +39,51 @@ class ViewController: UIViewController {
   // MARK: - View Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    // 1 
+    insertSampleData()
+    
+    // 2 
+    
+    let request = NSFetchRequest<Bowtie>(entityName: "Bowtie")
+    let firstTitle = segmentedControl.titleForSegment(at: 0)!
+    request.predicate = NSPredicate(format: "searchKey == %@", firstTitle)
+    
+    do {
+      // 3
+      let results = try managedContext.fetch(request)
+      
+      // 4
+      
+      populate(bowtie: results.first!)
+    } catch let error as NSError {
+      print("Could not fetch \(error), \(error.userInfo)")
+    }
   }
-
+  
+  func populate(bowtie: Bowtie) {
+    guard let imageData =  bowtie.photoData as Data?,
+    let lastWorn = bowtie.lastWorn as Date?,
+      let tintColor = bowtie.tintColor as? UIColor else {
+        return
+    }
+    
+    imageView.image = UIImage(data: imageData)
+    nameLabel.text = bowtie.name
+    ratingLabel.text = "Rating: \(bowtie.rating)/5"
+    
+    timesWornLabel.text = "# times worn : \(bowtie.timesWorn)"
+    
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .short
+    dateFormatter.timeStyle = .none
+    
+    lastWornLabel.text = "Last worn" + dateFormatter.string(from: lastWorn)
+    
+    favoriteLabel.isHidden = !bowtie.isFavorite
+    view.tintColor = tintColor
+  }
+  
   // MARK: - IBActions
   @IBAction func segmentedControl(_ sender: AnyObject) {
 
@@ -53,4 +96,62 @@ class ViewController: UIViewController {
   @IBAction func rate(_ sender: AnyObject) {
 
   }
+  
+  func insertSampleData() {
+    let fetch = NSFetchRequest<Bowtie>(entityName: "Bowtie")
+    fetch.predicate = NSPredicate(format: "searchKey != nil")
+    
+    let count = try! managedContext.count(for: fetch)
+   
+    if count > 0 {
+      // SampleData.plist data already in Core Data
+      return
+    }
+    
+    let path = Bundle.main.path(forResource: "SampleData", ofType: "plist")
+    let dataArray = NSArray(contentsOfFile: path!)!
+    
+    for dict in dataArray {
+      let entity = NSEntityDescription.entity(forEntityName: "Bowtie", in: managedContext)!
+      let bowite = Bowtie(entity: entity, insertInto: managedContext)
+      let btDict = dict as! [String: AnyObject]
+      
+      bowite.name = btDict["name"] as? String
+      bowite.searchKey = btDict["searchKey"] as? String
+      bowite.rating = btDict["rating"] as! Double
+    
+      let colorDict = btDict["tintColor"] as! [String: AnyObject]
+      bowite.tintColor = UIColor.color(dict: colorDict)
+      
+      let imageName = btDict["imageName"] as? String
+      let image = UIImage(named: imageName!)
+      let photoData = UIImagePNGRepresentation(image!)!
+      bowite.photoData = NSData(data: photoData)
+      
+      bowite.lastWorn = btDict["lastWorn"] as? NSDate
+      let timeNumber = btDict["timesWorn"] as! NSNumber
+      bowite.timesWorn = timeNumber.int32Value
+      bowite.isFavorite = btDict["isFavorite"] as! Bool
+    }
+    
+    try! managedContext.save()
+    
+  }
+
+  
 }
+
+
+
+private extension UIColor {
+  static func color(dict: [String: AnyObject]) -> UIColor? {
+    guard  let red = dict["red"] as? NSNumber,
+      let green = dict["green"] as? NSNumber,
+      let blue = dict["blue"] as? NSNumber else {
+        return nil
+    }
+    return UIColor(red: CGFloat(red)/255.0, green: CGFloat(green)/255.0, blue: CGFloat(blue)/255.0, alpha: 1)
+  }
+}
+
+
